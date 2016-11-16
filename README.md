@@ -9,7 +9,7 @@ Do NOT expect anonymity using this method. Polipo is an http proxy and can leak 
 
 ## Install
     wget https://github.com/archusers/traktor-arch/archive/master.zip -O traktor.zip
-    unzip traktor.zip && cd traktor-master
+    unzip traktor.zip && cd traktor-arch-master
     ./traktor-arch.sh
 
 
