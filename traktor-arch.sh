@@ -1,15 +1,14 @@
 #!/bin/bash
 clear
 
-echo -e "Traktor v1.3\nTor will be automatically installed and configured…\n\n"
+echo -e "Traktor-Arch v1.0\nTor will be automatically installed and configured…\n\n"
 
 # Install Packages
 sudo pacman -Sy
-sudo pacman -S	tor obfsproxy polipo dnscrypt-proxy  
+sudo pacman -S tor obfsproxy polipo dnscrypt-proxy  
 
 # Update torrc
-ADDRESS=$(pwd)
-bash "$ADDRESS"/update-torrc.sh
+sudo wget https://archusers.github.io/traktor/torrc -O /etc/tor/torrc > /dev/null
 
 # Write Polipo config
 echo 'logSyslog = true
@@ -18,18 +17,19 @@ proxyAddress = "::0"        # both IPv4 and IPv6
 allowedClients = 127.0.0.1
 socksParentProxy = "localhost:9050"
 socksProxyType = socks5' | sudo tee /etc/polipo/config > /dev/null
+
 sudo systemctl restart polipo
 
 # Install Finish
-echo "Install Finished successfully…"
+echo "Installation Finished successfully…"
 sudo systemctl start tor 1>/dev/null 2>&1
 sudo systemctl enable tor 1>/dev/null 2>&1
 
 # Wait for tor to establish connection
-echo "Tor is trying to establish a connection. This may take long for some minutes. Please wait" | tee <(systemctl status tor)
+echo "Tor is trying to establish a connection. This may take long for some minutes. Please wait" 
 bootstraped='n'
-sudo systemctl restart tor
-while [ $bootstraped == 'n' ]; do
+sudo systemctl restart tor 1>/dev/null 2>&1
+while [ $bootstraped = 'n' ]; do
 	if grep "Bootstrapped 100%: Done" <(systemctl status tor); then
 		bootstraped='y'
 	else
@@ -37,10 +37,10 @@ while [ $bootstraped == 'n' ]; do
 	fi
 done
 
-echo "If you want to configure other programs to use tor you have to manually set proxy to SOCKS5 127.0.0.1:9050 or HTTP 127.0.0.1:8123"
+echo -e "\nIf you want to configure other programs to use tor you have to manually set proxy to SOCKS5 127.0.0.1:9050 or HTTP 127.0.0.1:8123"
 echo "Do you want to use tor on whole network? [y/N]"
 
-read -n 1 SELECT > /dev/null
+read -n 1 SELECT
 if [ "$SELECT" = "Y" -o "$SELECT" = "y" ]
 then
 	# Set IP and Port on HTTP and SOCKS
@@ -54,11 +54,11 @@ fi
 
 echo -e "\nDo you want to install tor-browser too? [y/N]"
 
-read -n 1 SELECT > /dev/null
+read -n 1 SELECT
 if [ "$SELECT" = "Y" -o "$SELECT" = "y" ]
 then
 yaourt -S tor-browser-en
 fi
 
 # update finished
-echo -e "\nCongratulations!!! Your computer is using Tor. may run tor-browser-en now."
+echo -e "\nCongratulations!!! Your computer is using Tor."
