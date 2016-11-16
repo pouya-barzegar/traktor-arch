@@ -20,21 +20,6 @@ socksParentProxy = "localhost:9050"
 socksProxyType = socks5' | sudo tee /etc/polipo/config > /dev/null
 sudo systemctl restart polipo
 
-echo "Do you want to use tor on whole network? [y/N]"
-echo "If press No you have to manually set proxy to SOCKS5 127.0.0.1:9050 or HTTP 127.0.0.1:8123"
-
-read -n 1 SELECT
-if [ "$SELECT" = "Y" -o "$SELECT" = "y" ]
-then
-	# Set IP and Port on HTTP and SOCKS
-	gsettings set org.gnome.system.proxy mode 'manual'
-	gsettings set org.gnome.system.proxy.http host 127.0.0.1
-	gsettings set org.gnome.system.proxy.http port 8123
-	gsettings set org.gnome.system.proxy.socks host 127.0.0.1
-	gsettings set org.gnome.system.proxy.socks port 9050
-	gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '192.168.0.0/16', '10.0.0.0/8', '172.16.0.0/12']"
-fi
-
 # Install Finish
 echo "Install Finished successfully…"
 systemctl start tor 1>/dev/null 2>&1
@@ -51,6 +36,21 @@ while [ $bootstraped == 'n' ]; do
 	fi
 done
 
+echo "If you want to configure other programs to use tor you have to manually set proxy to SOCKS5 127.0.0.1:9050 or HTTP 127.0.0.1:8123"
+echo "Do you want to use tor on whole network? [y/N]"
+
+read -n 1 SELECT > /dev/null
+if [ "$SELECT" = "Y" -o "$SELECT" = "y" ]
+then
+	# Set IP and Port on HTTP and SOCKS
+	gsettings set org.gnome.system.proxy mode 'manual'
+	gsettings set org.gnome.system.proxy.http host 127.0.0.1
+	gsettings set org.gnome.system.proxy.http port 8123
+	gsettings set org.gnome.system.proxy.socks host 127.0.0.1
+	gsettings set org.gnome.system.proxy.socks port 9050
+	gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '192.168.0.0/16', '10.0.0.0/8', '172.16.0.0/12']"
+fi
+
 echo -e "\nDo you want to install tor-browser too? [y/N]"
 
 read -n 1 SELECT > /dev/null
@@ -60,4 +60,4 @@ yaourt -S tor-browser-en
 fi
 
 # update finished
-echo "Congratulations!!! Your computer is using Tor. may run tor-browser-en now."
+echo -e "\nCongratulations!!! Your computer is using Tor. may run tor-browser-en now."
