@@ -5,7 +5,6 @@ echo -e "Traktor v1.3\nTor will be automatically installed and configured…\n\n
 
 # Install Packages
 sudo pacman -Sy > /dev/null
-yaourt -S  tor-browser-en
 sudo pacman -S	tor obfsproxy polipo dnscrypt-proxy  
 
 # Write Bridge
@@ -51,6 +50,14 @@ while [ $bootstraped == 'n' ]; do
 		sleep 1
 	fi
 done
+
+echo -e "\nDo you want to install tor-browser too? [y/N]"
+
+read -n 1 SELECT > /dev/null
+if [ "$SELECT" = "Y" -o "$SELECT" = "y" ]
+then
+yaourt -S tor-browser-en
+fi
 
 # update finished
 echo "Congratulations!!! Your computer is using Tor. may run tor-browser-en now."
