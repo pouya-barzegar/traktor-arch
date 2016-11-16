@@ -4,12 +4,12 @@ clear
 echo -e "Traktor v1.3\nTor will be automatically installed and configured…\n\n"
 
 # Install Packages
-sudo pacman -Sy > /dev/null
+sudo pacman -Sy
 sudo pacman -S	tor obfsproxy polipo dnscrypt-proxy  
 
-# Write Bridge
-#sudo wget https://ubuntu-ir.github.io/traktor/torrc -O /etc/tor/torrc > /dev/null
-sudo cp ./torrc /etc/tor/torrc > /dev/null
+# Update torrc
+ADDRESS=$(pwd)
+bash "$ADDRESS"/update-torrc.sh
 
 # Write Polipo config
 echo 'logSyslog = true
